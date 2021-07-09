@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include('../includes/head.ejs') %>
+  <body class="d-flex flex-column h-100">
+    <%- include('../includes/header.ejs') %>
+    <main class="row p-3">
+      <div class="col-md-10 col-lg-8 mx-auto pt-3">
+        <% if (errorMessage) { %>
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <%=errorMessage %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% } %>
+
+        <form method="POST" action="/signup">
+          <div class="mb-3">
+            <label for="username" class="form-label text-white">Username</label>
+            <% if ('username' in validationErrors) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=validationErrors.username.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <input
+              class="form-control <%= 'username' in validationErrors ? 'invalid' : '' %>"
+              type="text"
+              id="username"
+              name="username"
+              value="<%= previousInvalidInput.username %>"
+              placeholder="Should contain at least 5 alphanumeric characters (a-z, A-Z, 0-9)"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label text-white">E-mail</label>
+            <% if ('email' in validationErrors) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=validationErrors.email.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <input
+              class="form-control <%= 'email' in validationErrors ? 'invalid' : '' %>"
+              type="email"
+              id="email"
+              name="email"
+              value="<%= previousInvalidInput.email %>"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label text-white">Password</label>
+            <% if ('password' in validationErrors) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=validationErrors.password.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <input
+              class="form-control <%= 'password' in validationErrors ? 'invalid' : '' %>"
+              type="password"
+              id="password"
+              name="password"
+              value="<%= previousInvalidInput.password %>"
+              placeholder="Should contain at least 8 characters"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label text-white">Confirm Password</label>
+            <% if ('confirmPassword' in validationErrors) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=validationErrors.confirmPassword.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <input
+              class="form-control <%= 'confirmPassword' in validationErrors ? 'invalid' : '' %>"
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value="<%= previousInvalidInput.confirmPassword %>"
+              required
+            >
+          </div>
+
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-light px-4 fw-bolder">Sign Up</button>
+          </div>
+        </form>
+
+        <div class="mt-3 text-center">
+          <span class="me-3 text-white">Already have an account?</span>
+          <a class="text-white" href="/login">Log In!</a>
+        </div>
+
+      </div>
+    </main>
+    <%- include('../includes/footer.ejs') %>
+  </body>
+</html>

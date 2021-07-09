@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include('../includes/head.ejs') %>
+  <body class="d-flex flex-column h-100">
+    <%- include('../includes/header.ejs') %>
+
+    <% if (errorMessage) { %>
+      <div class="alert alert-danger alert-dismissible fade show text-center w-75 mx-auto" role="alert">
+        <%=errorMessage %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+    <% if (infoMessage) { %>
+      <div class="alert alert-secondary alert-dismissible fade show text-center w-75 mx-auto" role="alert">
+        <%=infoMessage %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <main class="py-3">
+      <div id="carousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row">
+              <img src="/images/characters.png" alt="Image of Marvel Avengers" >
+            </div>
+
+            <div class="container d-md-flex align-items-md-center">
+              <div class="carousel-caption">
+                <h1>Amazing Super Heroes</h1>
+                <p>Who is your all-time favorite?</p>
+                <p><a class="btn btn-lg btn-marvel text-white" href="/marvel">Explore</a></p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="row">
+              <img src="/images/comics.png" alt="Image of Marvel comics" >
+            </div>
+
+            <div class="container d-md-flex align-items-md-center">
+              <div class="carousel-caption">
+                <h1>Ultimate Collection</h1>
+                <p>Check out and find your new favourite Marvel Comics.</p>
+                <p><a class="btn btn-lg btn-marvel text-white" href="/marvel">Explore</a></p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="row">
+              <img src="/images/community.png" alt="Image of Marvel action figures collection" >
+            </div>
+
+            <div class="container d-md-flex align-items-md-center">
+              <div class="carousel-caption">
+                <h1>Extraordinary Fans</h1>
+                <p>Join our Community!</p>
+                <p><a class="btn btn-lg btn-marvel text-white" href="/posts">Explore</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+      <section class="container-md character-section">
+        <div class="card mb-3">
+          <div class="row g-0">
+            <div class="row g-0 col-sm-6 col-md-5 col-lg-4">
+              <img class="img-fluid"
+                src="<%= character.thumbnail.path + '.' + character.thumbnail.extension %>" alt="Picture of <%= character.name %>" >
+            </div>
+            <div class="row g-0 col-sm-6 col-md-7 col-lg-8">
+              <div class="card-body d-flex flex-column">
+                <h3 class="card-title text-center">
+                  <a href="<%= characterHyperlinkToMarvel %>" class="hyperlink-to-marvel"><%= character.name %></a>
+                </h3>
+                <p class="card-text"><%= character.description %></p>
+                <p class="card-text">
+                  Comics: <%= character.comics.available %> | Series: <%= character.series.available %> |
+                  Stories: <%= character.stories.available %> | Events: <%= character.events.available%>
+                </p>
+                <div class="card-footer mt-auto text-muted"><%-attributionHTML %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="container-md comic-section">
+        <div class="card mb-3">
+          <div class="row g-0">
+            <div class="row g-0 col-sm-6 col-md-5 col-lg-4 order-md-1">
+              <img class="img-fluid"
+                src="<%= comic.thumbnail.path + '/standard_fantastic.' + comic.thumbnail.extension %>" alt="<%= comic.title %>" >
+            </div>
+            <div class="row g-0 col-sm-6 col-md-7 col-lg-8">
+              <div class="card-body d-flex flex-column">
+                <h3 class="card-title text-center">
+                  <a href="<%= comicHyperlinkToMarvel %>" class="hyperlink-to-marvel"><%= comic.title %></a>
+                </h3>
+                <p class="card-text"><%= comic.description %></p>
+                <p class="card-text">Characters:
+                  <% for (let character of comic.characters.items) { %>
+                    <%= character.name + ', ' %>
+                  <% } %></p>
+                <p class="card-text">Creators:
+                  <% for (let creator of comic.creators.items) { %>
+                    <%= creator.name + ' (' + creator.role + '), ' %>
+                  <% } %>
+                </p>
+                <div class="card-footer mt-auto text-muted"><%-attributionHTML %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="container-md post-section">
+        <% if (post) { %>
+          <div class="row g-0 bg-white mb-2">
+            <div class="row g-0 col-sm-6 col-md-5 col-lg-4">
+              <a class="d-block m-auto" href="/posts/details/<%=post._id %>">
+                <img class="img-fluid d-block m-auto" src="<%= post.imageUrl %>" alt="<%= post.title %>" style="height: 350px; width: auto" >
+              </a>
+            </div>
+            <div class="row g-0 col-sm-6 col-md-7 col-lg-8">
+              <div class="card-body d-flex flex-column">
+                <h3 class="card-title text-center mb-3 mt-lg-3"><%= post.title %></h3>
+                <p class="card-text"><%= post.content %></p>
+                <div class="d-flex justify-content-center align-items-center mb-2">
+                  <span class="card-text"><i class="fas fa-heart text-danger me-1"></i><%= post.usersLiked.length %></span>
+                  <button class="btn btn-outline-danger fw-bolder ms-auto" disabled>Like</button>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <label for="comment" class="form-label card-text text-black mb-0">Add Comment:</label>
+                  <button class="btn btn-outline-danger fw-bolder" disabled>Comment</button>
+                </div>
+                <textarea class="form-control" id="comment" name="comment" rows="3" disabled></textarea>
+              </div>
+            </div>
+            <div class="card-footer mt-auto text-muted d-flex justify-content-between">
+              <span>Created by <%=post.creator %></span>
+              <span><%=post.createdAt.toDateString() %></span>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <% if (post.comments.length > 0) { %>
+              <% comments.forEach((comment, i) => { %>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="heading-<%=comments.length - i %>">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%=comments.length - i %>" aria-expanded="false" aria-controls="collapse-0">
+                      #<%=comments.length - i %> <%=comment.creator %> commented on <%=comment.createdAt.toDateString() %>
+                    </button>
+                  </h2>
+                  <div id="collapse-<%=comments.length - i %>" class="accordion-collapse collapse" aria-labelledby="heading-<%=comments.length - i %>">
+                    <div class="accordion-body"><%=comment.content %></div>
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-no-comments">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-no-comments" aria-expanded="false" aria-controls="collapse-2">
+                    No comments for this post.
+                  </button>
+                </h2>
+                <div id="collapse-no-comments" class="accordion-collapse collapse" aria-labelledby="heading-no-comments">
+                  <div class="accordion-body">Be the first to comment!</div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        <% } else { %>
+          <div class="px-4 py-5 text-center bg-transparent text-white posts-hero">
+            <h4 class="display-5">No posts in the database.</h4>
+            <h4 class="display-5">Ready to create the first post?</h4>
+            <div class="col-lg-8 mx-auto">
+              <p class="lead mb-4">If you already have an account, Log in! Otherwise, Sign up!</p>
+            </div>
+          </div>
+        <% } %>
+      </section>
+
+    </main>
+    <%- include('../includes/footer.ejs') %>
+  </body>
+</html>

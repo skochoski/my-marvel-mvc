@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include('../includes/head.ejs') %>
+  <body class="d-flex flex-column h-100">
+    <%- include('../includes/header.ejs') %>
+
+    <% if (errorMessage) { %>
+      <div class="alert alert-danger alert-dismissible fade show text-center w-75 mx-auto" role="alert">
+        <%=errorMessage %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+    <% if (infoMessage) { %>
+      <div class="alert alert-secondary alert-dismissible fade show text-center w-75 mx-auto" role="alert">
+        <%=infoMessage %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <main class="flex-shrink-0 pb-3">
+      <section class="px-4 py-5 text-center bg-transparent text-white posts-hero">
+        <% if (landingOnPage) { %>
+          <h1 class="display-5 fw-bold">Welcome Marvel Fans!</h1>
+        <% } %>
+        <div class="col-lg-8 mx-auto">
+          <% if (landingOnPage) { %>
+            <p class="lead mb-4">Join our Community of passionate and friendly fellow Marvel fans. Browse through the most beloved Marvel Universe items and collectibles. Found something you really like? Write a comment, like the post, enjoy!!!</p>
+            <p class="lead mb-4">Want to see the latest posts? Or maybe the most liked? Or the ones with most comments? Click on a button bellow to rearrange the posts.</p>
+          <% } %>
+          <% if (posts.length > 0) { %>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+              <a class="btn btn-light px-4 fw-bolder" href="/posts?page=1" role="button">Latest Posts</a>
+              <a class="btn btn-light px-4 mx-sm-3 fw-bolder" href="/posts?sort=comments" role="button">Most Comments</a>
+              <a class="btn btn-light px-4 fw-bolder" href="/posts?sort=likes" role="button">Most Likes</a>
+            </div>
+          <% } else { %>
+            <h4 class="display-5 fw-bold">No posts for the moment.</h4>
+          <% } %>
+        </div>
+      </section>
+
+      <% if (posts.length > 0) { %>
+        <section class="container-fluid container-md posts-section">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+            <% for (const post of posts) { %>
+              <article class="col">
+                <div class="card h-100">
+                  <a class="image-wrapper" href="/posts/details/<%=post._id %>">
+                    <img class="card-img-top" src="<%=post.imageUrl %>" alt="<%=post.title %>">
+                  </a>
+                  <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><%=post.title %></h5>
+                    <p class="card-text mb-3"><%=post.content %></p>
+                    <p class="card-text text-center"><i class="fas fa-heart text-danger"></i><span class="ms-2"><%=post.usersLiked.length %></span></p>
+                    <p class="card-text text-center">Comments: <%=post.comments.length %></p>
+                  </div>
+                  <div class="card-footer">
+                    <% if (post.comments.length > 0) { %>
+                      <p class="card-text"><span class="fw-bolder">Latest Comment: "</span><span class="fst-italic"><%=post.comments[post.comments.length - 1].content.substring(0, 49) %> ..."</span></p>
+                    <% } else { %>
+                      <p class="card-text fw-bolder">Be the first to comment!</p>
+                    <% } %>
+                  </div>
+                  <div class="card-footer mt-auto text-muted d-flex justify-content-between">
+                    <span>Created by <%=post.creator %></span>
+                    <span><%=post.createdAt.toDateString() %></span>
+                  </div>
+                </div>
+              </article>
+            <% } %>
+          </div>
+        </section>
+        <ul class="pagination justify-content-center mt-3">
+          <li class="page-item">
+            <a class="page-link" href="?<%= isSortQueryValid ? `sort=${sortQuery}&` : ''%>page=1" aria-label="Previous" disabled="<%= currentPage === 1%>">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <% if (hasPreviousPage) { %>
+            <li class="page-item"><a class="page-link" href="?<%= isSortQueryValid ? `sort=${sortQuery}&` : ''%>page=<%= previousPage %>"><%= previousPage %></a></li>
+          <% } %>
+          <li class="page-item"><a class="page-link active" href="?<%= isSortQueryValid ? `sort=${sortQuery}&` : ''%>page=<%= currentPage %>"><%= currentPage %></a></li>
+          <% if (hasNextPage) { %>
+            <li class="page-item"><a class="page-link" href="?<%= isSortQueryValid ? `sort=${sortQuery}&` : ''%>page=<%= nextPage %>"><%= nextPage %></a></li>
+          <% } %>
+          <li class="page-item">
+            <a class="page-link" href="?<%= isSortQueryValid ? `sort=${sortQuery}&` : ''%>page=<%=lastPage %>" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      <% } %>
+
+      <div class="px-4 pt-3 pb-5 text-center bg-transparent text-white posts-hero">
+        <h4 class="display-5 fw-bold">Ready to create your new post?</h4>
+        <div class="col-lg-8 mx-auto">
+          <% if (!isAuthenticated) { %>
+          <p class="lead">If you already have an account, Log in! Otherwise, Sign up!</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            <a class="btn btn-light px-4 me-sm-3 fw-bolder" href="/signup" role="button">Sign Up</a>
+            <a class="btn btn-light px-4 fw-bolder" href="/login" role="button">Log In</a>
+          </div>
+          <% } else { %>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            <a class="btn btn-light px-4 fw-bolder" href="/posts/create" role="button">Create Post</a>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+    </main>
+    <%- include('../includes/footer.ejs') %>
+  </body>
+</html>

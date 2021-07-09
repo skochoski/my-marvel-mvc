@@ -1,0 +1,52 @@
+<header class="mb-3">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top" aria-label="Site navigation">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img class="brand-logo" src="/images/logo.png" alt="Site logo" />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#site-navbar"
+        aria-controls="site-navbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="site-navbar">
+        <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+          <li class="nav-item mx-lg-2 mx-xl-4">
+            <a class="nav-link <%= path === '/marvel' ? 'text-danger' : 'text-white' %>" href="/marvel">My Marvel</a>
+          </li>
+          <li class="nav-item mx-lg-2 mx-xl-4">
+            <a class="nav-link <%= path === '/posts' ? 'text-danger' : 'text-white' %>" href="/posts">All Posts</a>
+          </li>
+          <% if (isAuthenticated) { %>
+            <li class="nav-item mx-lg-2 mx-xl-4">
+              <a class="nav-link <%= path === '/my-posts' ? 'text-danger' : 'text-white' %>" href="/posts/my-posts">My Posts</a>
+            </li>
+            <li class="nav-item mx-lg-2 mx-xl-4">
+              <a class="nav-link <%= path === '/posts/create' ? 'text-danger' : 'text-white' %>" href="/posts/create">Create</a>
+            </li>
+            <li class="nav-item mx-lg-2 mx-xl-4">
+              <form  class="nav-item" action="/logout" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="submit" class="nav-link w-100 text-start text-white" value="Logout">
+              </form>
+            </li>
+          <% } else { %>
+            <li class="nav-item mx-lg-2 mx-xl-4">
+              <a class="nav-link <%= path === '/login' ? 'text-danger' : 'text-white' %>" href="/login">Login</a>
+            </li>
+            <li class="nav-item mx-lg-2 mx-xl-4">
+              <a class="nav-link <%= path === '/signup' ? 'text-danger' : 'text-white' %>" href="/signup">Signup</a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

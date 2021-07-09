@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include('../includes/head.ejs') %>
+  <body class="d-flex flex-column h-100">
+    <%- include('../includes/header.ejs') %>
+    <main class="flex-shrink-0 pb-3">
+
+      <% if (isSearchQuery && !isSearchQueryValid) { %>
+        <div class="alert alert-danger alert-dismissible fade show text-center mx-5" role="alert">
+          <%=errorMessage %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <section class="mb-4 py-5 px-sm-5 search-section" >
+        <div class="container px-sm-5">
+          <p class="mb-3 text-white text-center">My Marvel - Character Search</p>
+          <form action="/marvel" method="GET">
+            <div class="input-group mb-3">
+              <input class="form-control" type="text" id="name" name="name" placeholder="Ex. Hulk, Iron Man, Spider-Man (Peter Parker), etc..." aria-label="Marvel character username" aria-describedby="submit-name" required >
+              <input class="btn text-white float-right" type="submit" id="submit-name" value="Search!">
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <% if (isSearchQuery && isSearchQueryValid) { %>
+        <% if (render === 'character') { %>
+
+          <section class="container-md character-section">
+            <div class="card mb-3">
+              <div class="row g-0">
+                <div class="row g-0 col-sm-6 col-md-5 col-lg-4">
+                  <img class="img-fluid" src="<%= character.thumbnail.path + '.' + character.thumbnail.extension %>" alt="Picture of <%= character.name %>" >
+                </div>
+                <div class="row g-0 col-sm-6 col-md-7 col-lg-8">
+                  <div class="card-body d-flex flex-column">
+                    <h3 class="card-title text-center">
+                      <% if (render === 'character') { %><a href="<%= characterHyperlinkToMarvel %>" class="hyperlink-to-marvel"><% } %>
+                      <%= character.name %>
+                      <% if (render === 'character') { %></a><% } %>
+                    </h3>
+                    <p class="card-text"><%= character.description %></p>
+                    <p class="card-text">
+                      Comics: <%= character.comics.available %> | Series: <%= character.series.available %> |
+                      Stories: <%= character.stories.available %> | Events: <%= character.events.available%>
+                    </p>
+                    <div class="card-footer mt-auto text-muted">
+                      <%-attributionHTML %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="container-fluid container-md comics-section">
+            <h4 class="m-4 text-white text-center">
+              Comics featuring <%= character.name %>:
+            </h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+              <% for (let comic of comics) { %>
+                <div class="col">
+                  <div class="card h-100">
+                    <a class="d-block" href="/marvel?comics-id=<%= comic.id %>">
+                      <img class="card-img-top"
+                        src="<%= comic.thumbnail.path + '/standard_fantastic.' + comic.thumbnail.extension %>"
+                        alt="<%= comic.title %>"
+                      />
+                    </a>
+
+                    <div class="card-body">
+                      <h5 class="card-title"><%= comic.title %></h5>
+                      <p class="card-text">Characters:
+                        <% for (character of comic.characters.items) { %>
+                          <%= character.name + ', ' %>
+                        <% } %>
+                      </p>
+                      <p class="card-text">Creators:
+                        <% for (creator of comic.creators.items) { %>
+                          <%= creator.name + ' (' + creator.role + '), ' %>
+                        <% } %>
+                      </p>
+                    </div>
+                    <div class="card-footer">
+                      <small class="text-muted">
+                        <%-attributionHTML %>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </section>
+
+        <% } else if (render === 'comics') { %>
+
+          <section class="container-md comic-section">
+            <div class="card mb-3">
+              <div class="row g-0">
+                <div class="row g-0 col-sm-6 col-md-5 col-lg-4">
+                  <img class="img-fluid" src="<%= comic.thumbnail.path + '/standard_fantastic.' + comic.thumbnail.extension %>" alt="<%= comic.title %>" >
+                </div>
+                <div class="row g-0 col-sm-6 col-md-7 col-lg-8">
+                  <div class="card-body d-flex flex-column">
+                    <h3 class="card-title text-center">
+                      <% if (render === 'comics') { %><a href="<%= comicHyperlinkToMarvel %>" class="hyperlink-to-marvel"><% } %>
+                      <%= comic.title %>
+                      <% if (render === 'comics') { %></a><% } %>
+                    </h3>
+                    <p class="card-text">Characters:
+                      <% for (let character of comic.characters.items) { %>
+                        <%= character.name + ', ' %>
+                      <% } %></p>
+                    <p class="card-text">Creators:
+                      <% for (let creator of comic.creators.items) { %>
+                        <%= creator.name + ' (' + creator.role + '), ' %>
+                      <% } %>
+                    </p>
+                    <div class="card-footer mt-auto text-muted">
+                      <%-attributionHTML %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="container-fluid container-md characters-section">
+            <h4 class="m-4 text-white text-center">Characters appearing in <%= comic.title %>:</h4>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+
+              <% for (let character of characters) { %>
+                <div class="col">
+                  <div class="card h-100">
+                    <a class="d-block" href="/marvel?character-id=<%= character.id %>">
+                      <img class="card-img-top"
+                        src="<%= character.thumbnail.path + '/standard_fantastic.' + character.thumbnail.extension %>"
+                        alt="Picture of <%= character.name %>"
+                      />
+                    </a>
+
+                    <div class="card-body">
+                      <h5 class="card-title"><%= character.name %></h5>
+                      <p class="card-text"><%= character.description %></p>
+                      <p class="card-text">
+                        <small class="text-muted">
+                          Comics: <%= character.comics.available %> | Series: <%= character.series.available %> |
+                          Stories: <%= character.stories.available %> | Events: <%= character.events.available%>
+                        </small>
+                      </p>
+                    </div>
+                    <div class="card-footer">
+                      <small class="text-muted">
+                        <%-attributionHTML %>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+
+            </div>
+          </section>
+        <% } %>
+      <% } %>
+    </main>
+    <%- include('../includes/footer.ejs') %>
+  </body>
+</html>

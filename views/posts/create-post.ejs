@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include('../includes/head.ejs') %>
+  <body class="d-flex flex-column h-100">
+    <%- include('../includes/header.ejs') %>
+    <main class="row p-3">
+      <div class="col-md-10 col-lg-8 mx-auto pt-3">
+        <% if (errorMessage && errorMessage !== 'Attached file is not an image.' && errorMessage !== 'The image size should be less than 2MB.') { %>
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <%=errorMessage %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% } %>
+
+        <form method="POST" action="/posts/create" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="title" class="form-label text-white">Post Title</label>
+            <% if ('title' in validationErrors) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=validationErrors.title.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <input
+              class="form-control <%= 'title' in validationErrors ? 'invalid' : '' %>"
+              type="text"
+              id="title"
+              name="title"
+              value="<%=previousInvalidInput.title %>"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="content" class="form-label text-white">Post Content</label>
+            <% if ('content' in validationErrors) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=validationErrors.content.msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <textarea
+              class="form-control <%= 'content' in validationErrors ? 'invalid' : '' %>"
+              id="content"
+              name="content"
+              rows="5"
+              required
+            ><%=previousInvalidInput.content %></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="image" class="form-label text-white">Select Image</label>
+            <% if (errorMessage === 'Attached file is not an image.' || errorMessage === 'The image size should be less than 2MB.') { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%=errorMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <input
+              class="form-control <%= errorMessage === 'Attached file is not an image.' ? 'invalid' : '' %>"
+              type="file"
+              id="image"
+              name="image"
+              required
+            >
+          </div>
+
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-light px-4 fw-bolder">Create Post</button>
+          </div>
+        </form>
+
+      </div>
+    </main>
+    <%- include('../includes/footer.ejs') %>
+  </body>
+</html>
